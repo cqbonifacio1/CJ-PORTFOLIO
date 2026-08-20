@@ -90,20 +90,32 @@ export default function About() {
         </h2>
       </div>
 
-      {/* Text B */}
-      <div ref={textBRef} className="absolute left-46 top-45 max-w-xl -translate-y-1/2">
-        <h2 className="relative -left-36 font-serif mb-5 text-[clamp(5.5rem,4.5vw,4rem)] italic leading-none text-white">
-          Hi, I&rsquo;m <span className="text-accent not-italic">CJ</span>
-        </h2>
+      {/* Text B — vertical centering is done with flexbox on a wrapper
+          (items-center), NOT with a percentage-based CSS transform. This
+          matters because GSAP animates this element's own `y` transform
+          for the slide-up reveal (y: 60 -> 0 below). If a CSS
+          `-translate-y-1/2` utility were on the SAME element, GSAP would
+          bake that percentage into a fixed pixel value the first time the
+          animation runs — and that pixel value depends on the element's
+          rendered height, which differs slightly between Mac and Windows
+          due to font metrics. Keeping centering (flex) and animation
+          (GSAP's y) on separate elements avoids that conflict entirely, so
+          it centers correctly and identically on every screen. */}
+      <div className="absolute left-46 top-0 flex h-full items-center">
+        <div ref={textBRef} className="max-w-xl">
+          <h2 className="relative -left-36 font-serif mb-5 text-[clamp(3rem,4.5vw,5.5rem)] italic leading-none text-white">
+            Hi, I&rsquo;m <span className="text-accent not-italic">CJ</span>
+          </h2>
 
-        <p className="font-body text-[clamp(1.8rem,1.3vw,1.35rem)] leading-relaxed text-white/90">
-          A <span className="text-accent">Magna Cum Laude</span> CS graduate from the University of the
-          Philippines Manila. I craft solutions at the intersection of{" "}
-          <span className="text-accent">machine learning</span>,{" "}
-          <span className="text-accent">business intelligence</span>, and{" "}
-          <span className="text-accent">web development</span>. I turn domain complexity into tools people
-          actually use.
-        </p>
+          <p className="font-body text-[clamp(1.1rem,1.3vw,1.35rem)] leading-relaxed text-white/90">
+            A <span className="text-accent">Magna Cum Laude</span> CS graduate from the University of the
+            Philippines Manila. I craft solutions at the intersection of{" "}
+            <span className="text-accent">machine learning</span>,{" "}
+            <span className="text-accent">business intelligence</span>, and{" "}
+            <span className="text-accent">web development</span>. I turn domain complexity into tools people
+            actually use.
+          </p>
+        </div>
       </div>
     </section>
   );

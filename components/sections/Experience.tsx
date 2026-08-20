@@ -14,10 +14,15 @@ const LINE_TO_CONTENT_GAP = 96; // ~1 inch, per CJ's note
 
 /**
  * Professional Experience — ONE continuous pinned section. The background
- * video and the "Professional Experience" heading stay fixed on screen for
- * the entire journey through all 4 companies; only the date, vertical
- * line, and image track change as you scroll (companies cross-fade
- * between each other rather than each being its own full-page pin).
+ * video stays fixed for the entire journey through all 4 companies.
+ *
+ * The "Professional Experience" heading now lives INSIDE the same
+ * vertically-centered flex column as the date/company content (instead of
+ * being pinned at a fixed `top-28`). That means the heading and the dates
+ * move together as a single block and stay a fixed distance apart
+ * (via `mb-10` on the heading) no matter the viewport height — so it looks
+ * the same on a 15" MacBook and a Windows laptop instead of drifting apart
+ * on taller/shorter screens.
  *
  * Within each company's active window, its images fan in one at a time
  * (cover image visible first — and ONLY the cover — then each next image
@@ -82,68 +87,75 @@ export default function Experience() {
     <section id="work" ref={containerRef} className="relative isolate h-screen w-full overflow-hidden px-16">
       <VideoBackground src="/videos/profexppage.mp4" eager />
 
-      {/* "Professional Experience" heading — stays fixed for the whole
-          section, sized similarly to the Four Disciplines heading, and
-          positioned ~1 inch to the right of the vertical line. */}
-      <div className="absolute left-16 top-28" style={{ paddingLeft: LINE_TO_CONTENT_GAP }}>
-        <h2 className="leading-none">
-          <span className="font-serif text-[clamp(3.2rem,5.4vw,5.25rem)] italic text-white">Professional </span>
-          <span className="font-display text-[clamp(3.2rem,5.4vw,5.25rem)] font-bold text-white">Experience</span>
-        </h2>
-      </div>
-
       {/* Vertical timeline rail */}
       <div className="absolute left-16 top-0 h-full w-[3px] bg-white/40" />
 
-      {experience.map((row, rowIndex) => (
-        <div
-          key={row.company}
-          ref={(el) => {
-            companyRefs.current[rowIndex] = el;
-          }}
-          className="absolute inset-0 flex flex-col justify-center"
-          style={{ paddingLeft: 64 + LINE_TO_CONTENT_GAP }}
-        >
-          <p className="font-serif mb-8 mt-10 flex items-center gap-3 text-[clamp(1.35rem,1.9vw,2.1rem)] italic text-white/90">
-            <span className="inline-block h-3 w-3 rounded-full border-2 border-white" />
-            {row.dateRange}
-          </p>
+      {/* Single vertically-centered column holding BOTH the heading and the
+          (cross-fading) per-company content, so their relative spacing is
+          fixed regardless of viewport height. */}
+      <div
+        className="absolute inset-0 flex flex-col justify-center"
+        style={{ paddingLeft: 64 + LINE_TO_CONTENT_GAP }}
+      >
+        <h2 className="mb-10 leading-none">
+          <span className="font-serif text-[clamp(3.2rem,5.4vw,5.25rem)] italic text-white">Professional </span>
+          <span className="font-display text-[clamp(3.2rem,5.4vw,5.25rem)] font-bold text-white">Experience</span>
+        </h2>
 
-          <div className="relative overflow-hidden">
+        {/* Relative wrapper: the first company sits in normal flow (so it
+            determines the block's height), later companies cross-fade in
+            as absolute overlays on top of it. */}
+        <div className="relative">
+          {experience.map((row, rowIndex) => (
             <div
+              key={row.company}
               ref={(el) => {
-                trackRefs.current[rowIndex] = el;
+                companyRefs.current[rowIndex] = el;
               }}
-              className="flex items-end gap-7"
+              className={rowIndex === 0 ? "relative" : "absolute inset-0"}
             >
-              {row.images.map((img, i) => (
+              <p className="font-serif mb-8 flex items-center gap-3 text-[clamp(1.35rem,1.9vw,2.1rem)] italic text-white/90">
+                <span className="inline-block h-3 w-3 rounded-full border-2 border-white" />
+                {row.dateRange}
+              </p>
+
+              <div className="relative overflow-hidden">
                 <div
-                  key={img.src}
-                  data-fan-card={i < 3 ? undefined : true}
-                  className="relative h-[260px] w-[420px] shrink-0 overflow-hidden rounded-2xl bg-neutral-800"
-                  style={{ zIndex: row.images.length - i }}
+                  ref={(el) => {
+                    trackRefs.current[rowIndex] = el;
+                  }}
+                  className="flex items-end gap-7"
                 >
-                  <img src={img.src} alt={img.caption} className="h-full w-full object-cover" />
-                  <div className="from-green/85 absolute inset-0 bg-gradient-to-t via-transparent to-transparent" />
-                  <span className="font-mono absolute left-3 top-3 rounded-full border border-white/50 bg-white/10 px-2.5 py-1 text-xs text-white backdrop-blur-sm">
-                    {img.badge}
-                  </span>
-                  <div className="absolute bottom-3 left-3 right-3">
-                    {i === 0 ? (
-                      <>
-                        <p className="font-display text-xl font-bold text-white">{row.company}</p>
-                        <p className="font-body text-base text-white/90">{row.role}</p>
-                      </>
-                    ) : (
-                      <p className="font-body text-[15px] leading-snug text-white">{img.caption}</p>
-                    )}
-                  </div>
+                  {row.images.map((img, i) => (
+                    <div
+                      key={img.src}
+                      data-fan-card={i < 3 ? undefined : true}
+                      className="relative h-[260px] w-[420px] shrink-0 overflow-hidden rounded-2xl bg-neutral-800"
+                      style={{ zIndex: row.images.length - i }}
+                    >
+                      <img src={img.src} alt={img.caption} className="h-full w-full object-cover" />
+                      <div className="from-green/85 absolute inset-0 bg-gradient-to-t via-transparent to-transparent" />
+                      <span className="font-mono absolute left-3 top-3 rounded-full border border-white/50 bg-white/10 px-2.5 py-1 text-xs text-white backdrop-blur-sm">
+                        {img.badge}
+                      </span>
+                      <div className="absolute bottom-3 left-3 right-3">
+                        {i === 0 ? (
+                          <>
+                            <p className="font-display text-xl font-bold text-white">{row.company}</p>
+                            <p className="font-body text-base text-white/90">{row.role}</p>
+                          </>
+                        ) : (
+                          <p className="font-body text-[15px] leading-snug text-white">{img.caption}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
+          ))}
         </div>
-      ))}
+      </div>
     </section>
   );
 }
