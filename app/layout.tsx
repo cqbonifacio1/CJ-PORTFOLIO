@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import SpinCursor from "@/components/SpinCursor";
+import DesktopOnlyGate from "@/components/DesktopOnlyGate";
 
 // Font notes:
 // - Garet is not on Google Fonts (no free web-safe distribution). Substituting
@@ -30,12 +31,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Inter:wght@400;500;600&family=Roboto+Mono:wght@400;500&family=Montserrat:wght@600;700;800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Inter:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap"
           rel="stylesheet"
         />
       </head>
       <body className="bg-ink text-paper min-h-screen">
-        {children}
+        {/* Blocks phones (portrait + landscape) and small/portrait tablets.
+            Fully removes #page-content from layout on mobile via plain CSS
+            media queries — see DesktopOnlyGate for the breakpoint logic. */}
+        <DesktopOnlyGate />
+
+        <div id="page-content">
+          {children}
+        </div>
+
         {/* Custom cursor — mounted globally as a fixed full-screen overlay,
             replaces the Fluid Trail per CJ's latest round. Blue to match
             the site's sky-blue accent. */}
