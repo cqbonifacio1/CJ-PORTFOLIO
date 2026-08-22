@@ -6,11 +6,11 @@
   --color-sky: #5ce1e6;
   --color-green: #9aff86;
 
-  --font-display: "Poppins", sans-serif; /* Garet substitute */
-  --font-serif: "Playfair Display", serif; /* Playfair Display */
-  --font-body: "Inter", sans-serif; /* Neue Montreal substitute */
-  --font-mono: "Roboto Mono", monospace; /* Roboto Mono */
-  --font-title: "Montserrat", sans-serif; /* Montserrat */
+  --font-display: var(--font-poppins); /* Garet substitute */
+  --font-serif: var(--font-playfair); /* Playfair Display */
+  --font-body: var(--font-inter); /* Neue Montreal substitute */
+  --font-mono: var(--font-roboto-mono); /* Roboto Mono */
+  --font-title: var(--font-montserrat); /* Montserrat */
 }
 
 @theme inline {

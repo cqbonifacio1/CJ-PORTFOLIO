@@ -44,7 +44,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               {project.title.split(": ")[0]}:{" "}
               <span className="text-accent">{project.title.split(": ").slice(1).join(": ")}</span>
             </h1>
-            <p className="font-body mt-5 max-w-xl text-sm leading-relaxed text-white/80 sm:text-base">
+            <p className="font-body mt-5 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg">
               {project.description}
             </p>
           </div>
